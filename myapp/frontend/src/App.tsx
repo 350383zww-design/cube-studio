@@ -9,7 +9,7 @@ import {
 import { Drawer, Dropdown } from 'antd';
 import { IRouterConfigPlusItem } from './api/interface/baseInterface';
 import { formatRoute, routerConfigPlus } from './routerConfig';
-import { clearWaterNow, drawWaterNow, getParam } from './util'
+import { clearWaterNow, getParam } from './util'
 import { getAppHeaderConfig, getAppMenu, getCustomDialog } from './api/kubeflowApi';
 import { IAppHeaderItem, ICustomDialog } from './api/interface/kubeflowInterface';
 import { AppstoreOutlined, DownOutlined } from '@ant-design/icons';
@@ -191,12 +191,7 @@ const AppWrapper = (props: IProps) => {
 
   useEffect(() => {
     if (sourceAppList.length && Object.keys(sourceAppMap).length) {
-      const { pathname } = location
-      if (pathname === '/') {
-        clearWaterNow()
-      } else {
-        drawWaterNow()
-      }
+      clearWaterNow()
     }
   }, [location, sourceAppList, sourceAppMap])
 
