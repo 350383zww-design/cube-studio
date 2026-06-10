@@ -337,10 +337,11 @@ const AppWrapper = (props: IProps) => {
         isShowNav === 'false' ? null : <div className="navbar">
           <div className="d-f ac pl24 h100">
             <div className="d-f ac">
-              <div className="cp pr16" style={{ width: 'auto' }} onClick={() => {
+              <div className="cp pr16 logo" style={{ width: 'auto' }} onClick={() => {
                 navigate('/', { replace: true })
               }}>
-                <img style={{ height: 42 }} src={globalConfig.appLogo.default} alt="img" />
+                <img src={globalConfig.appLogo} alt="img" />
+                <h2>边海防模型生成与迁移软件平台</h2>
               </div>
             </div>
           </div>
