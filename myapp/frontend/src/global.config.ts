@@ -1,17 +1,16 @@
 import { TThemeType } from "./theme"
 
-const appLogo = require('./images/logoCB.png')
-const loadingLogo = require('./images/logoCB.png')
+const sharedLogo = '/static/assets/images/brand/logoCB.png';
 
 interface IGlobalConfig {
-    appLogo: any,
-    loadingLogo: any,
+    appLogo: string,
+    loadingLogo: string,
     theme: TThemeType,
 }
 
 const globalConfig: IGlobalConfig = {
-    appLogo,
-    loadingLogo,
+    appLogo: sharedLogo,
+    loadingLogo: sharedLogo,
     theme: 'star',
 }
 

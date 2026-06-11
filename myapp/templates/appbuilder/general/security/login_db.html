@@ -1,0 +1,55 @@
+{% extends "appbuilder/base.html" %}
+
+{% set login_brand = appbuilder.app.config.get('APP_LOGIN_BRAND') or {} %}
+{% set login_title = login_brand.get('title') or appbuilder.app.config.get('APP_LOGIN_TITLE') or '边海防模型生成与迁移软件平台' %}
+{% set login_logo = login_brand.get('logo') or appbuilder.app.config.get('APP_LOGIN_LOGO') or '/static/assets/images/brand/logoCB.png' %}
+{% set login_favicon = login_brand.get('favicon') or login_logo %}
+{% set login_form_title = login_brand.get('form_title') or '用户登录' %}
+{% set login_footer_name = login_brand.get('footer_name') or appbuilder.app_name or 'Cube-Studio' %}
+{% set login_messages = get_flashed_messages(with_categories=true) %}
+{% set frontend_files = frontend_entry_files(True) %}
+
+{% block page_title %}登录 - {{ login_title }}{% endblock %}
+
+{% block head_css %}
+<link rel="icon" type="image/png" href="{{ login_favicon }}">
+{% for entry in frontend_files.get('css', []) %}
+<link rel="stylesheet" type="text/css" href="{{ entry }}">
+{% endfor %}
+{% endblock %}
+
+{% block head_js %}
+{{ super() }}
+<script>
+  window.__CUBE_LOGIN_CONTEXT__ = {
+    title: {{ login_title | tojson }},
+    logo: {{ login_logo | tojson }},
+    favicon: {{ login_favicon | tojson }},
+    formTitle: {{ login_form_title | tojson }},
+    footerName: {{ login_footer_name | tojson }},
+    action: {{ (request.full_path if request.query_string else request.path) | tojson }},
+    csrfToken: {{ (form.csrf_token._value() if form and form.csrf_token else (csrf_token() if csrf_token else '')) | tojson }},
+    registerUrl: {{ (appbuilder.sm.get_url_for_registeruser if appbuilder.sm.auth_user_registration else '') | tojson }},
+    username: {{ (form.username.data if form and form.username else '') | tojson }},
+    rememberMe: {{ ((form.remember_me.data if form and form.remember_me else false) or false) | tojson }},
+    messages: [
+      {% for category, message in login_messages %}
+      {
+        category: {{ (category or 'info') | tojson }},
+        message: {{ message | tojson }}
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  };
+</script>
+{% endblock %}
+
+{% block tail_js %}
+{% for entry in frontend_files.get('js', []) %}
+<script src="{{ entry }}"></script>
+{% endfor %}
+{% endblock %}
+
+{% block body %}
+<div id="root"></div>
+{% endblock %}

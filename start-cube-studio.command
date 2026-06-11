@@ -39,6 +39,9 @@ for _name in ['SQLALCHEMY_POOL_SIZE','SQLALCHEMY_POOL_TIMEOUT','SQLALCHEMY_POOL_
 CACHE_CONFIG = {'CACHE_TYPE': 'SimpleCache'}
 ENABLE_CORS = True
 WTF_CSRF_ENABLED = False
+DEBUG = True
+TEMPLATES_AUTO_RELOAD = True
+SEND_FILE_MAX_AGE_DEFAULT = 0
 PY
 }
 
@@ -70,7 +73,7 @@ start_local_backend() {
   echo "Starting local backend on 5001 in Terminal..."
   osascript <<OSA
 tell application "Terminal"
-  do script "cd '$ROOT'; export PYTHONPATH='$LOCAL_DIR:$ROOT'; export MYAPP_CONFIG='cube_runtime_config'; '$ROOT/.venv/bin/python' -c \"from myapp import app; app.run(host='127.0.0.1', port=5001, debug=False)\" 2>&1 | tee '$BACKEND_LOG'"
+  do script "cd '$ROOT'; export FLASK_ENV='development'; export PYTHONPATH='$LOCAL_DIR:$ROOT'; export MYAPP_CONFIG='cube_runtime_config'; '$ROOT/.venv/bin/python' '$LOCAL_DIR/run_local_backend.py' 2>&1 | tee '$BACKEND_LOG'"
   activate
 end tell
 OSA

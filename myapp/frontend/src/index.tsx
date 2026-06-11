@@ -6,15 +6,18 @@ import './index.less';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { ConfigProvider, Spin } from 'antd';
 import './store/index'
+import LoginPage from './pages/Login';
 
 import {
-  BrowserRouter, HashRouter
+  BrowserRouter
 } from "react-router-dom";
 import cookies from 'js-cookie';
 import { handleTips } from './api';
 import { setTheme } from './theme';
 import LoadingStar from './components/LoadingStar/LoadingStar';
 import globalConfig from './global.config';
+import { getFrontendMode } from './runtime/appMode';
+import { getLoginPageContext } from './runtime/loginContext';
 
 Spin.setDefaultIndicator(<LoadingStar />)
 
@@ -27,20 +30,28 @@ if (isLocalPreviewBypass && !cookies.get('myapp_username')) {
 
 let isLogin = false
 const userName = cookies.get('myapp_username')
+const frontendMode = getFrontendMode({
+  pathname: window.location.pathname,
+  isAuthenticated: !!userName,
+  isLocalPreviewBypass,
+});
 
-if (!!userName || isLocalPreviewBypass) {
+if (frontendMode === 'app') {
   isLogin = true
-} else {
+} else if (frontendMode === 'redirect') {
   handleTips.gotoLogin()
 }
 
 ReactDOM.render(
-  isLogin ?
-    <ConfigProvider locale={zhCN}>
+  <ConfigProvider locale={zhCN}>
+    {frontendMode === 'login' ? (
+      <LoginPage context={getLoginPageContext()} />
+    ) : isLogin ? (
       <BrowserRouter basename={process.env.REACT_APP_BASE_ROUTER || '/'}>
         <App />
       </BrowserRouter>
-    </ConfigProvider> : <></>,
+    ) : <></>}
+  </ConfigProvider>,
   document.getElementById('root')
 );
 

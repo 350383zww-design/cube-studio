@@ -62,6 +62,7 @@ describe('app layout helpers', () => {
     const sections = buildPrimaryNavSections(mockNavTree);
     expect(sections).toHaveLength(2);
     expect(sections[0].title).toBe('项目空间');
+    expect('icon' in sections[0]).toBe(false);
     expect(sections[0].entries.map((entry: IPrimaryNavEntry) => `${entry.kind}:${entry.title}`)).toEqual([
       'label:项目组',
       'item:项目分组',

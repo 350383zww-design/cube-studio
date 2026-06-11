@@ -49,14 +49,12 @@ export interface IPrimaryNavEntry {
   menuType?: string;
   url?: string;
   disabled?: boolean;
-  hidden?: boolean;
 }
 
 interface IPrimaryNavSection {
   key: string;
   path?: string;
   title: string;
-  icon?: any;
   entries: IPrimaryNavEntry[];
 }
 
@@ -89,7 +87,6 @@ const flattenSectionEntries = (
       menuType: item.menu_type,
       url: item.url,
       disabled: !!item.disable,
-      hidden: !!item.hidden,
     });
 
     return entries;
@@ -103,7 +100,6 @@ export const buildPrimaryNavSections = (items: IRouterConfigPlusItem[] = []): IP
       key: item.path || item.title || '',
       path: item.path,
       title: item.title || '',
-      icon: item.icon,
       entries: flattenSectionEntries(item.children || []),
     }));
 };
@@ -145,9 +141,7 @@ export const getNextExpandedSectionKeys = (
   return retainedKeys
 }
 
-interface IProps { }
-
-const AppWrapper = (props: IProps) => {
+const AppWrapper = () => {
   const [sourceAppList, setSourceAppList] = useState<IRouterConfigPlusItem[]>([])
   const [sourceAppMap, setSourceAppMap] = useState<Record<string, IRouterConfigPlusItem>>({})
   const [CurrentRouteComponent, setCurrentRouteComponent] = useState<any>()

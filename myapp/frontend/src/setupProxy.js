@@ -21,7 +21,7 @@ module.exports = function (app) {
     );
 
     app.use(
-        ['**/api/**', '/myapp', '/login', '/idex', '/users', '/roles','/static/assets','/static/appbuilder', '/pipeline_modelview', '/project_modelview'],  //本地调试pipeline和首页的时候，不要添加/static/appbuilder代理
+        ['**/api/**', '/myapp', '/login', '/logout', '/idex', '/users', '/roles', '/static/assets', '/static/appbuilder', '/static/frontend-login', '/pipeline_modelview', '/project_modelview'],
         createProxyMiddleware({
             target: proxyTarget,
             changeOrigin: true,

@@ -2,7 +2,7 @@ import datetime
 import time, random
 from copy import deepcopy
 import json
-from flask import redirect, g, flash, request, session, abort, render_template, redirect, Flask
+from flask import redirect, g, flash, request, session, abort, render_template, redirect, Flask, send_from_directory
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
@@ -13,6 +13,8 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 import wtforms_json
 from myapp.security import MyappSecurityManager
+from myapp.brand import LOGIN_BRAND
+from myapp.utils.frontend_assets import get_frontend_entry_files_from_manifest
 from myapp.utils.core import pessimistic_connection_handling, setup_cache
 from myapp.utils.log import DBEventLogger
 import pysnooper
@@ -23,16 +25,37 @@ wtforms_json.init()
 
 # 在这个文件里面只创建app，不要做view层面的事情。
 APP_DIR = os.path.dirname(__file__)
+FRONTEND_LOGIN_STATIC_DIR = os.path.join(APP_DIR, "static", "appbuilder", "frontend")
 
 
-# app = Flask(__name__,static_url_path='/static',static_folder='static',template_folder='templates')
-app = Flask(__name__)  # ,static_folder='/mnt',static_url_path='/mnt'
+# 明确指定静态目录，避免本地开发时 /static 资源路由失效
+app = Flask(__name__, static_url_path='/static', static_folder='static', template_folder='templates')
 app.json.sort_keys=False    # 返回字典乱序问题
 app.json.ensure_ascii = False   # 返回 中文乱码问题
+
+app.static_folder = os.path.join(APP_DIR, "static")
+
+
+def _send_project_static(filename):
+    return send_from_directory(app.static_folder, filename)
+
+
+app.send_static_file = _send_project_static
+
+
+@app.route("/static/frontend-login/<path:filename>")
+def frontend_login_static(filename):
+    return send_from_directory(FRONTEND_LOGIN_STATIC_DIR, filename)
 
 CONFIG_MODULE = os.environ.get("MYAPP_CONFIG", "myapp.config")
 app.config.from_object(CONFIG_MODULE)
 conf = app.config
+
+login_brand = deepcopy(LOGIN_BRAND)
+login_brand.update(conf.get("APP_LOGIN_BRAND", {}))
+app.config["APP_LOGIN_BRAND"] = login_brand
+app.config.setdefault("APP_LOGIN_TITLE", login_brand.get("title"))
+app.config.setdefault("APP_LOGIN_LOGO", login_brand.get("logo"))
 
 if conf.get('DATA_DIR', ''):
     if not os.path.exists(conf['DATA_DIR']):
@@ -47,6 +70,8 @@ print(conf.get('SQLALCHEMY_DATABASE_URI', ''))
 # MANIFEST_FILE = APP_DIR + "/static/assets/dist/manifest.json"
 MANIFEST_FILE = APP_DIR + "/assets/dist/manifest.json"
 manifest = {}
+FRONTEND_ASSET_MANIFEST_FILE = APP_DIR + "/static/appbuilder/frontend/asset-manifest.json"
+frontend_asset_manifest = {}
 
 
 # @pysnooper.snoop()
@@ -60,6 +85,15 @@ def parse_manifest_json():
             manifest = full_manifest.get("entrypoints", {})
     except Exception:
         pass
+
+
+def parse_frontend_asset_manifest_json():
+    global frontend_asset_manifest
+    try:
+        with open(FRONTEND_ASSET_MANIFEST_FILE, "r") as f:
+            frontend_asset_manifest = json.load(f)
+    except Exception:
+        frontend_asset_manifest = {}
 
 # 获取依赖的js文件地址
 # @pysnooper.snoop()
@@ -85,7 +119,19 @@ def get_unloaded_chunks(files, loaded_chunks):
     return filtered_files
 
 
+def get_frontend_entry_files(use_backend_static=False):
+    if app.debug:
+        parse_frontend_asset_manifest_json()
+
+    files = frontend_asset_manifest.get("files", {})
+    return get_frontend_entry_files_from_manifest(
+        files,
+        use_backend_static=use_backend_static,
+    )
+
+
 parse_manifest_json()
+parse_frontend_asset_manifest_json()
 
 
 # 字典每一个key，例如css_manifest都可以在模板中使用
@@ -96,6 +142,7 @@ def get_manifest():
         get_unloaded_chunks=get_unloaded_chunks,
         js_manifest=get_js_manifest_files,
         css_manifest=get_css_manifest_files,
+        frontend_entry_files=get_frontend_entry_files,
     )
 
 
