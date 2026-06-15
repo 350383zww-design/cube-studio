@@ -1,11 +1,6 @@
-import React from 'react'
-import globalConfig from '../../global.config';
-import './LoadingStar.less';
+import React from 'react';
+import { Spin } from 'antd';
 
 export default function LoadingStar() {
-    return (
-        <>
-            <img className="loading-cb" src={globalConfig.loadingLogo} alt="" />
-        </>
-    )
+    return <Spin size="large" />;
 }

@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.less';
 import zhCN from 'antd/lib/locale/zh_CN';
-import { ConfigProvider, Spin } from 'antd';
+import { ConfigProvider } from 'antd';
 import './store/index'
 import LoginPage from './pages/Login';
 
@@ -14,12 +14,9 @@ import {
 import cookies from 'js-cookie';
 import { handleTips } from './api';
 import { setTheme } from './theme';
-import LoadingStar from './components/LoadingStar/LoadingStar';
 import globalConfig from './global.config';
 import { getFrontendMode } from './runtime/appMode';
 import { getLoginPageContext } from './runtime/loginContext';
-
-Spin.setDefaultIndicator(<LoadingStar />)
 
 setTheme(globalConfig.theme)
 
