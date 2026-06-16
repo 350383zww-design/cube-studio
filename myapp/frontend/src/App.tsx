@@ -341,32 +341,6 @@ const AppWrapper = () => {
           </div>
 
           <div className="d-f ac plr16 h100">
-            {
-              headerConfig.map(config => {
-                if (config.icon) {
-                  return <a
-                    key={`${config.text}-${config.link}`}
-                    href={config.link}
-                    target="_blank"
-                    className="mr12 d-f ac" rel="noreferrer"
-                  >
-                    <span className="pr4">{config.text}</span><span className="icon-custom" dangerouslySetInnerHTML={{ __html: config.icon }}></span>
-                  </a>
-                } else if (config.pic_url) {
-                  return <a
-                    key={`${config.text}-${config.link}`}
-                    href={config.link}
-                    target="_blank"
-                    className="mr12 d-f ac" rel="noreferrer"
-                  >
-                    <span className="pr4">{config.text}</span><img style={{ height: 30 }} src={config.pic_url} alt="" />
-                  </a>
-                }
-
-                return null
-              })
-            }
-
             <Dropdown menu={{ items: [
               { key: 'user-center', label: '用户中心', onClick: () => navigate('/user') },
               {
