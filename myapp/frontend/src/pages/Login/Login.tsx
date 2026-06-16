@@ -28,7 +28,7 @@ const LoginPage: React.FC<ILoginProps> = ({ context }) => {
     return (
         <div className="login-page">
             <section className="login-page__hero">
-                <div className="login-page__brand">
+                <div className="login-page__brand" aria-label="平台品牌区">
                     {context.logo ? (
                         <img
                             className="login-page__brand-logo"
@@ -37,16 +37,14 @@ const LoginPage: React.FC<ILoginProps> = ({ context }) => {
                         />
                     ) : null}
                     <div className="login-page__brand-copy">
-                        <p className="login-page__brand-label">Cube Studio</p>
-                        <h1 className="login-page__brand-title">{context.title}</h1>
+                        <h2 className="login-page__brand-title">{context.title}</h2>
                     </div>
                 </div>
             </section>
 
             <section className="login-page__panel">
                 <Card className="login-page__card" bordered={false}>
-                    <Title className="login-page__card-title" level={3}>{context.formTitle}</Title>
-                    <Text className="login-page__card-subtitle">使用站内统一前端登录入口进入系统</Text>
+                    <Title className="login-page__card-title" level={4}>{context.formTitle}</Title>
 
                     {context.messages.length ? (
                         <div className="login-page__alerts">
@@ -90,7 +88,7 @@ const LoginPage: React.FC<ILoginProps> = ({ context }) => {
                         </div>
 
                         <div className="login-page__options">
-                            <Checkbox name="remember_me" value="1" defaultChecked={context.rememberMe}>记住密码</Checkbox>
+                            <Checkbox name="remember_me" defaultChecked={context.rememberMe}>记住密码</Checkbox>
                         </div>
 
                         <Button className="login-page__submit" type="primary" htmlType="submit" block>
@@ -104,11 +102,6 @@ const LoginPage: React.FC<ILoginProps> = ({ context }) => {
                         ) : null}
                     </form>
 
-                    <div className="login-page__footer">
-                        <span className="login-page__footer-line"></span>
-                        <span className="login-page__footer-text">{context.footerName}</span>
-                        <span className="login-page__footer-line"></span>
-                    </div>
                 </Card>
             </section>
         </div>
