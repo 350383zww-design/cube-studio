@@ -4,12 +4,36 @@ import cookies from 'js-cookie';
 const baseApi = process.env.REACT_APP_BASE_URL || 'http://localhost/'
 const isLocalPreviewBypass = process.env.NODE_ENV === 'development'
 
+export const getLoginAuthUrl = (host: string, currentHref: string) => `//${host}/login/?login_url=${currentHref}`;
+export const getDirectLoginUrl = (host: string) => `//${host}/login/`;
+export const getLogoutUrl = (host: string) => `//${host}/logout`;
+
+interface ILocationLike {
+    host: string;
+    replace: (url: string) => void;
+}
+
 export type AxiosResFormat<T> = Promise<AxiosResponse<ResponseFormat<T>>>;
 export interface ResponseFormat<T = any> {
     message: string;
     result: T;
     data: T;
     status: number
+}
+
+export const completeLogout = async (
+    fetchImpl: typeof fetch,
+    locationLike: ILocationLike,
+) => {
+    try {
+        await fetchImpl(getLogoutUrl(locationLike.host), {
+            credentials: 'include',
+            redirect: 'manual',
+        });
+    } catch (error) {
+        console.error('logout request failed', error);
+    }
+    locationLike.replace(getDirectLoginUrl(locationLike.host));
 }
 
 
@@ -51,7 +75,7 @@ class HandleTips {
         }
         if (this.lock) {
             this.lock = false;
-            const authUrl = `//${window.location.host}/login/?login_url=${window.location.href}`
+            const authUrl = getLoginAuthUrl(window.location.host, window.location.href)
             setTimeout(() => {
                 window.location.href = authUrl;
             }, 800);
@@ -59,9 +83,8 @@ class HandleTips {
     }
 
     userlogout() {
-        const logoutUrl = `//${window.location.host}/logout`
-        setTimeout(() => {
-            window.location.href = logoutUrl;
+        setTimeout(async () => {
+            await completeLogout(fetch, window.location);
         }, 800);
     }
 

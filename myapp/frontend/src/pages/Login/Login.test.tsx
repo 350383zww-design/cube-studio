@@ -24,8 +24,9 @@ describe('LoginPage', () => {
 
         expect(screen.getByRole('heading', { name: '边海防模型生成与迁移软件平台' })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: '用户登录' })).toBeInTheDocument();
-        expect(screen.getByText('使用站内统一前端登录入口进入系统')).toBeInTheDocument();
-        expect(screen.getAllByText('边海防模型生成与迁移软件平台')).toHaveLength(2);
+        expect(screen.getByLabelText('平台品牌区')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('请输入用户名')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('请输入密码')).toBeInTheDocument();
         expect(screen.queryByText(/cube studio/i)).not.toBeInTheDocument();
     });
 });
