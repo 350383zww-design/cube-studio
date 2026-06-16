@@ -10,8 +10,8 @@ import { Drawer, Dropdown } from 'antd';
 import { IRouterConfigPlusItem } from './api/interface/baseInterface';
 import { formatRoute, routerConfigPlus } from './routerConfig';
 import { clearWaterNow, getParam } from './util'
-import { getAppHeaderConfig, getAppMenu, getCustomDialog } from './api/kubeflowApi';
-import { IAppHeaderItem, ICustomDialog } from './api/interface/kubeflowInterface';
+import { getAppMenu, getCustomDialog } from './api/kubeflowApi';
+import { ICustomDialog } from './api/interface/kubeflowInterface';
 import { AppstoreOutlined, DownOutlined } from '@ant-design/icons';
 import Cookies from 'js-cookie'
 import { handleTips } from './api';
@@ -149,7 +149,6 @@ const AppWrapper = () => {
   const [imgUrlProtraits, setImgUrlProtraits] = useState('')
   const [customDialogVisable, setCustomDialogVisable] = useState(false)
   const [customDialogInfo, setCustomDialogInfo] = useState<ICustomDialog>()
-  const [headerConfig, setHeaderConfig] = useState<IAppHeaderItem[]>([])
   const isShowNav = getParam('isShowNav')
 
   const navigate = useNavigate();
@@ -177,10 +176,6 @@ const AppWrapper = () => {
       applyRoutes(tarRoute)
     }).catch(err => { })
 
-    getAppHeaderConfig().then(res => {
-      const config = res.data
-      setHeaderConfig(config)
-    }).catch(err => { })
   }, [])
 
   useEffect(() => {
